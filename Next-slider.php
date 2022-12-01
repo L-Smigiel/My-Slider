@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pure CSS Responsive Image Slider</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<style type="text/css">
+    body {
+        margin: 0;
+    }
+    * {
+        box-sizing: border-box;
+    }
+    #slider {
+        overflow: hidden;
+        background-color: #4D6E97;
+        padding: 20vh 0;
+    }
+    #slider-content {
+        display: flex;
+        justify-content: space-evenly;
+    }
+    #moving-content{
+        position: relative;
+        grid-row: 2 / 3;
+        grid-column: 2 / 3;
+        height: 300px;
+        width: 80vw;
+        display: flex;
+        justify-content: space-evenly;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+    .slider-photo{
+        position: absolute;
+        display: inline-block;
+        z-index: 8;
+        opacity: 1;
+        will-change: opacity;
+    }
+    .animation{
+    animation: opacity-change 1s ease-in-out;
+    }
+
+    @keyframes opacity-change {
+        0% {
+            opacity: 0;
+        }
+        10% {
+            opacity: 1;
+        }
+        66% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+    #slider-photo1 > img, #slider-photo5 > img, #slider-photo6 > img, #slider-photo7 > img, #slider-photo8 > img{
+        height: 100px; 
+    }
+    #slider-photo2 > img, #slider-photo4 > img{
+        height: 200px;
+    }
+    #slider-photo3 > img{
+        height: 300px; 
+    }
+    #slider-photo1{
+        left: -2vw;
+        z-index: 6;
+    }
+    #slider-photo2{
+        left: 7vw;
+        z-index: 7;
+    }
+    #slider-photo3{
+        z-index: 8;
+    }
+    #slider-photo4{
+        right: 7vw;
+        z-index: 7;
+    }
+    #slider-photo5{
+        right: -2vw;
+        z-index: 6;
+    }
+    #slider-photo6, #slider-photo7, #slider-photo8{
+        z-index: 5;
+        opacity: 0.5;
+    }
+    .arrow-left {
+        grid-row: 1 / 4;
+        grid-column: 1 / 2;
+    }
+    .arrow-right {
+        grid-row: 1 / 4;
+        grid-column: 3 / 4;
+    }
+    .arrow {
+        opacity: 1;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 5;
+        background-color: initial;
+        border: 0;
+        margin: 0;
+        padding: 0;
+    }
+    button.arrow:hover, button.arrow:focus, button.arrow:focus{
+        background-color: initial;
+        outline: none;
+    }
+    .icons {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+    .icon {
+        padding: 0 5px 0 5px;
+    }
+</style>
+</head>
+<body>
+<section id="slider">
+    <div id="slider-content">
+        <div class="arrow arrow-left" id="arrow-left">
+            <button class="arrow" onclick="movePicLeft()">
+                <img src="https://piwo-johannes.pl/wp-content/uploads/2022/11/Left-arrow-1.png"/>
+            </button>
+        </div>
+        <div id="moving-content">
+                <div class="slider-photo" id="slider-photo1" data-index="1"><img src="https://piwo-johannes.pl/wp-content/uploads/2022/11/Amber_craft_brewery_piwo_rzemieslnicze_Muzeum-Gdanska_Johannes_22.png" alt=""/></div>
+                <div class="slider-photo" id="slider-photo2" data-index="2"><img src="https://piwo-johannes.pl/wp-content/uploads/2022/11/baranek-zakupiony-przez-Browar-Amber-dla-MHMG.png" alt=""/></div>
+                <div class="slider-photo" id="slider-photo3" data-index="3"><img src="https://piwo-johannes.pl/wp-content/uploads/2022/11/Amber_craft_brewery_piwo_rzemieslnicze_Muzeum-Gdanska_Johannes_22.png" alt=""/></div>
+                <div class="slider-photo" id="slider-photo4" data-index="4"><img src="https://piwo-johannes.pl/wp-content/uploads/2022/11/baranek-zakupiony-przez-Browar-Amber-dla-MHMG.png" alt=""/></div>
+                <div class="slider-photo" id="slider-photo5" data-index="5"><img src="https://piwo-johannes.pl/wp-content/uploads/2022/11/Amber_craft_brewery_piwo_rzemieslnicze_Muzeum-Gdanska_Johannes_22.png" alt=""/></div>
+                <div class="slider-photo" id="slider-photo6" data-index="6"><img src="https://piwo-johannes.pl/wp-content/uploads/2022/11/baranek-zakupiony-przez-Browar-Amber-dla-MHMG.png" alt=""/></div>
+                <div class="slider-photo" id="slider-photo7" data-index="7"><img src="https://piwo-johannes.pl/wp-content/uploads/2022/11/Amber_craft_brewery_piwo_rzemieslnicze_Muzeum-Gdanska_Johannes_22.png" alt=""/></div>
+                <div class="slider-photo" id="slider-photo8" data-index="8"><img src="https://piwo-johannes.pl/wp-content/uploads/2022/11/baranek-zakupiony-przez-Browar-Amber-dla-MHMG.png" alt=""/></div>
+        </div>
+        <div class="arrow arrow-right" id="arrow-right">
+            <button class="arrow" onclick="movePicRight()">
+                <img src="https://piwo-johannes.pl/wp-content/uploads/2022/11/Right-arrow-1.png"/>
+            </button>
+        </div>
+    </div>
+</section>
+<script>
+    const SLIDER_PHOTO_CLASSNAME = "slider-photo";
+
+    function getPhotosCollection () {
+        return document.getElementsByClassName(SLIDER_PHOTO_CLASSNAME);
+    }
+
+    function setPhotoIndex(photo, index) {
+        photo.dataset.index = index;
+        photo.id = `${SLIDER_PHOTO_CLASSNAME}${index}`;
+        photo.classList.remove('animation'); // reset animation
+        void photo.offsetWidth; // trigger reflow
+        photo.classList.add('animation'); // start animation
+    }
+
+    function movePhotos(direction) {
+        const photosCollection = getPhotosCollection();
+
+        for (const photo of photosCollection) {
+            const index = parseInt(photo.dataset.index);
+
+            if (direction === "right" && index === photosCollection.length) {
+                setPhotoIndex(photo, 1);
+            } else if (direction === "left" && index === 1) {
+                setPhotoIndex(photo, photosCollection.length);
+            } else {
+                const indexChange = direction === "right" ? 1 : - 1;
+
+                setPhotoIndex(photo, index + indexChange);
+            }
+        }
+    }
+    function movePicRight() {
+        movePhotos("right");
+    }
+    function movePicLeft() {
+        movePhotos("left");
+    }
+</script>
+</body>
+</html>
